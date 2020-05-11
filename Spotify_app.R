@@ -3,6 +3,7 @@ library(shinythemes)
 library(plotrix)
 library(Rspotify)
 
+options(httr_oauth_cache=T)
 keys <- spotifyOAuth("spotify plot","a46cde2d9ace45caad073785d9eea36c","b65d781fc6034b0688ed26b557ad851e")
 
 user <- getUser("Ukshin",token=keys)
