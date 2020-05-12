@@ -4,8 +4,8 @@ library(plotrix)
 library(charlie86/spotifyr)
 
 # Spotify Authentication
-id <- "your client ID"
-secret <- "your client secret"
+id <- "5f5f8357fca8446cb7ce3aac2d603161"
+secret <- "741217b2f1e747028d8ce6e0b98913d3"
 Sys.setenv(SPOTIFY_CLIENT_ID = id)
 Sys.setenv(SPOTIFY_CLIENT_SECRET = secret)
 access_token <- get_spotify_access_token()
