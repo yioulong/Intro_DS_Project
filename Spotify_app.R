@@ -70,7 +70,7 @@ plot_relation =function(x){
     Artist_relation = related_artist(x)
     search_artist = searchArtist(x,token=keys)
 
-    plot(NA, xlim = c(-30,30), ylim = c(-30,30), main =paste0(search_artist$artist[1]," Relation"))
+    plot(NA, xlim = c(-30,30), ylim = c(-30,30), main =paste0(search_artist$artist[1]," Relation"), xlab = "", ylab = "")
 
 
     N = 20
