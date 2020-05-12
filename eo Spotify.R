@@ -14,7 +14,7 @@ access_token <- get_spotify_access_token()
 # This function is to convert our input to Artist Spotify ID so we can access its Spotify data
 convert_to_ArtistID <- function(inputArtist) {
   artistName = inputArtist
-  HeaderValue = paste0('Bearer ', mytoken)
+  HeaderValue = paste0('Bearer ', mytoken)1
   
   URI = paste0('https://api.spotify.com/v1/search?query=', artistName,'&offset=0&limit=20&type=artist')
   response2 = GET(url = URI, add_headers(Authorization = HeaderValue))
