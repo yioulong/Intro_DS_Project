@@ -114,7 +114,7 @@ plot_artist = function(x){
         danc_ener[i,4] = feature_track$energy
     }
 
-    plot(NA, xlim = c(0,1), ylim = c(0,1), main =paste0(search_artist$artist[1]," Top track's danceability & energy"), xlab = "Danceability", ylab = "energy")
+    plot(NA, xlim = c(0,1), ylim = c(0,1), main =paste0("The danceability & energy of ", search_artist$artist[1], "'s top 10 tracks"), xlab = "Danceability", ylab = "Energy")
 
     for(i in 1:N){
         points(danc_ener[i,3], danc_ener[i,4], pch = 19, col = i)
@@ -129,20 +129,25 @@ ui <- fluidPage(
 
     sidebarLayout(
         sidebarPanel(
-            textInput("artistA", "I am looking for the most ", value = "", placeholder = "Artist Name"),
+            textInput("artistA", "Tell me more about ", value = "", placeholder = "My Favourite Artist"),
             actionButton("cast", "\n Search", icon = icon("search")),
             selectInput("Artist_select", "Select Artist", choices = NULL),
-            actionButton("second_cast", "\n Compute simulation", icon = icon("calculator")),
+            actionButton("second_cast", "\n Explore", icon = icon("calculator")),
         ),
 
         mainPanel(
 
             tabsetPanel(
                 
-                tabPanel("Explication",textOutput("App_info")),
-                tabPanel("Description",tableOutput("artist_info"), uiOutput("image1")),
+                tabPanel("App Explication",textOutput("para1"), textOutput("break1"),
+                         textOutput("para2"), textOutput("break2"),
+                         textOutput("para3_1"), textOutput("para3_2"), textOutput("para3_3"), textOutput("para3_4"), textOutput("break3"),
+                         textOutput("para4"), textOutput("break4"),
+                         textOutput("para5_1"), textOutput("para5_2"), textOutput("para5_3"), textOutput("break5"),
+                         textOutput("para6")),
+                tabPanel("Artist Information",tableOutput("artist_info"), uiOutput("image1")),
                 tabPanel("Related Artists Plot" ,plotOutput("Relation_plot")),
-                tabPanel("Danceability & Energy of Top's 10 Track",
+                tabPanel("Track Analysis",
                          plotOutput("plot_track",click = "plot_click"),
                          uiOutput("prewiew"),tableOutput("test"))
             )
@@ -241,19 +246,28 @@ server <- function(input, output, session) {
     }, height = 740, width = 720)
 
 
-    output$App_info <- renderText({
-        paste0("blalalalal")
-        #Related Artists Plot --> if the circle is big so the artist has a high popularity
-                       #--> if the closer the circle is to the center the more it is linked to the artist
-
-        #Danceability & Energy of Top's 10 Track
-                      # -->  x = danc... y= energy
-                        #points reprensent the top 10 track of the artist
-        #             if you click on one of point you get the song preview
-                        #(warning : for certain  artist spotify does not provide the preview Url so it doesn't work)
-
-
-    })
+    output$para1 <- renderText({paste0("Welcome to the one and only music app built by Ukshin Ukshini, Halim Jashari, Corrina Pascale and Yiou Long.")})
+    output$break1 <- renderText({paste0("-----♬")})
+    
+    output$para2 <- renderText({paste0("We suggest you to use Google Chrome for optimal experience.")}) 
+    output$break2 <- renderText({paste0("-----♬")})
+    
+    output$para3_1 <- renderText({paste0("Wanna know more about your favourite artist?")}) 
+    output$para3_2 <- renderText({paste0("Type in his/her name and you can find out his/her basic information, relations with other artists and music analysis of his/her top 10 tracks!")})
+    output$para3_3 <- renderText({paste0("Our system currently only supports European alphabets.")})
+    output$para3_4 <- renderText({paste0("Non-European characters such as Chinese, Korean, Japanese and Thai may cause system shutdown and will be replaced by □ on the plot.")})
+    output$break3 <- renderText({paste0("-----♬")})
+    
+    
+    output$para4 <- renderText({paste0("For the Related Artists Plot, the distance between your Artist and the bubble of other artists represents the relatability, and the size of the bubble represents the artist's popularity.")})
+    output$break4 <- renderText({paste0("-----♬")})
+    
+    output$para5_1 <- renderText({paste0("For the Track Analysis, we have his/her 10 tracks plotted on a diagram based on the danceability and energy level of each track.")})
+    output$para5_2 <- renderText({paste0("Click on the dot to play it for 30s preview. ")})                                   
+    output$para5_3 <- renderText({paste0("Unfortunately Spotify doesn't have url for every songs of every artists, so sometimes you might not be able to play the song, and an error message will show up on your screen.")})    
+    output$break5 <- renderText({paste0("-----♬")})
+    
+    output$para6 <- renderText({paste0("We hope you enjoy our app : )")})
 
 }
 shinyApp(ui, server)
