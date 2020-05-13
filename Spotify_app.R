@@ -70,16 +70,17 @@ plot_relation =function(x){
     Artist_relation = related_artist(x)
     search_artist = searchArtist(x,token=keys)
 
-    plot(NA, xlim = c(-30,30), ylim = c(-30,30), main =paste0(search_artist$artist[1]," Relation"), xlab = "", ylab = "")
+    plot(NA, xlim = c(-100,100), ylim = c(-100,100), main =paste0(search_artist$artist[1]," Relation"), xlab = "", ylab = "")
 
 
     N = 20
     Mat = matrix(0, N, 2)
     for(i in 1:N){
 
-        angle <- runif(1,0,2*pi)
-        step <- i+5
+        angle = runif(1,0,2*pi)
+        step = i*5
 
+        
         Mat[i, ] = Mat[i, ] + step*c(cos(angle),sin(angle))
 
         lines(c(0, Mat[i,1]), c(0, Mat[i,2]), col = 1)
@@ -88,12 +89,12 @@ plot_relation =function(x){
 
     }
     for(i in 1:N){
-        draw.circle(Mat[i,1],Mat[i,2],(Artist_relation$popularity[i]/20),nv = 1000,border="black",lty=1,lwd=1, col=rgb(30,215,96,maxColorValue = 255))
+        draw.circle(Mat[i,1],Mat[i,2],(Artist_relation$popularity[i])/10,nv = 1000,border="black",lty=1,lwd=1, col=rgb(30,215,96,maxColorValue = 255))
 
         text(Mat[i,1],Mat[i,2],labels = Artist_relation$name[i], col = 1, cex = 0.5)
     }
 
-    draw.circle(0,0,(search_artist$popularity[1]/20),nv = 1000,border="black",lty=1,lwd=1, col=rgb(30,215,96,maxColorValue = 255))
+    draw.circle(0,0,(search_artist$popularity[1])/10,nv = 1000,border="black",lty=1,lwd=1, col=rgb(30,215,96,maxColorValue = 255))
 
     text(0,0,labels = search_artist$artist[1], col = 1, cex = 0.5) # peut avoir un probleme si le nom Artist_relation$name pas correct
 }
@@ -137,9 +138,9 @@ ui <- fluidPage(
         mainPanel(
 
             tabsetPanel(
-
-                tabPanel("Description",tableOutput("artist_info"), uiOutput("image1")),
+                
                 tabPanel("Explication",textOutput("App_info")),
+                tabPanel("Description",tableOutput("artist_info"), uiOutput("image1")),
                 tabPanel("Related Artists Plot" ,plotOutput("Relation_plot")),
                 tabPanel("Danceability & Energy of Top's 10 Track",
                          plotOutput("plot_track",click = "plot_click"),
