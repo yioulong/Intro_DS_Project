@@ -19,11 +19,18 @@ Preview_url = function(y){
         paste0("https://api.spotify.com/v1/artists/",search_artist$id[1],
                "/top-tracks?country=","US"),
         httr::config(token = keys)))
-    return(
-        dplyr::bind_rows(
-            lapply(req$tracks, function(x)
-                data.frame(id = x$id, name = x$name, preview_url = x$preview_url,
-                           stringsAsFactors = F))))
+    
+    if(is.null(req[[1]][[1]]$preview_url) != TRUE && is.null(req[[1]][[2]]$preview_url) != TRUE && is.null(req[[1]][[3]]$preview_url) != TRUE && is.null(req[[1]][[4]]$preview_url) != TRUE && is.null(req[[1]][[5]]$preview_url) != TRUE && is.null(req[[1]][[6]]$preview_url) != TRUE && is.null(req[[1]][[7]]$preview_url) != TRUE && is.null(req[[1]][[8]]$preview_url) != TRUE && is.null(req[[1]][[9]]$preview_url) != TRUE && is.null(req[[1]][[10]]$preview_url) != TRUE){ 
+        return(
+            dplyr::bind_rows(
+                lapply(req$tracks, function(x)
+                    data.frame(id = x$id, name = x$name, preview_url = x$preview_url,
+                               stringsAsFactors = F))))
+    }else{
+        test = matrix(0,1,3)
+        test[1,1]="null"
+        return(test)
+    }
 }
 
 Compute_norm = function(x0, y0,x1,y1){
@@ -96,7 +103,7 @@ plot_relation =function(x){
 
     draw.circle(0,0,(search_artist$popularity[1])/10,nv = 1000,border="black",lty=1,lwd=1, col=rgb(30,215,96,maxColorValue = 255))
 
-    text(0,0,labels = search_artist$artist[1], col = 1, cex = 0.5) # peut avoir un probleme si le nom Artist_relation$name pas correct
+    text(0,0,labels = search_artist$artist[1], col = 1, cex = 0.5) 
 }
 
 plot_artist = function(x){
@@ -189,29 +196,31 @@ server <- function(input, output, session) {
     cast4 <- eventReactive(input$plot_click, {
 
         Pre = Preview_url(input$Artist_select)
-        search_artist = searchArtist(input$Artist_select,token=keys)
-
-        top_track = getTopTracks(search_artist$id[1],"US", token=keys)
-        N = nrow(top_track)
-        danc_ener_pos = matrix(0, N, 4)
-        for(i in 1:N){
-
-            feature_track = getFeatures(top_track$artist_id[i], token=keys)
-            danc_ener_pos[i,1] = feature_track$id
-            danc_ener_pos[i,2] = top_track$name[i]
-            danc_ener_pos[i,3] = feature_track$danceability
-            danc_ener_pos[i,4] = feature_track$energy
-        }
-        selec = 0
-        for(i in 1:N){
-            if(Compute_norm(input$plot_click$x, input$plot_click$y,as.numeric(danc_ener_pos[i,3]), as.numeric(danc_ener_pos[i,4])) < 0.01){
-                selec = i
+        if(Pre[1,1] != "null"){ 
+            search_artist = searchArtist(input$Artist_select,token=keys)
+            
+            top_track = getTopTracks(search_artist$id[1],"US", token=keys)
+            N = nrow(top_track)
+            danc_ener_pos = matrix(0, N, 4)
+            for(i in 1:N){
+                
+                feature_track = getFeatures(top_track$artist_id[i], token=keys)
+                danc_ener_pos[i,1] = feature_track$id
+                danc_ener_pos[i,2] = top_track$name[i]
+                danc_ener_pos[i,3] = feature_track$danceability
+                danc_ener_pos[i,4] = feature_track$energy
             }
-        }
-
-        tags$audio(src = Pre$preview_url[selec], type = "audio/mp3",
-                   autoplay = FALSE, controls = TRUE)
-
+            selec = 0
+            for(i in 1:N){
+                if(Compute_norm(input$plot_click$x, input$plot_click$y,as.numeric(danc_ener_pos[i,3]), as.numeric(danc_ener_pos[i,4])) < 0.05){
+                    selec = i
+                }
+            }
+            
+            tags$audio(src = Pre$preview_url[selec], type = "audio/mp3", 
+                       autoplay = FALSE, controls = TRUE) 
+            
+        } 
 
     })
 
@@ -237,6 +246,12 @@ server <- function(input, output, session) {
     cast3 <- eventReactive(input$second_cast, {
 
         plot_artist(input$Artist_select)
+        Pre = Preview_url(input$Artist_select)
+        if(Pre[1,1] == "null"){ 
+            
+        legend(0,0.5 , legend = "Preview URL for this artist are not avalaible!\n You can try for example: Dua lipa or Red Hot Chili Peppers",
+               col= 2, cex=0.8,
+               title="!Warning!\b", text.font=4, bg='lightblue',text.col = "red")}
     })
 
     output$plot_track = renderPlot({
@@ -264,7 +279,7 @@ server <- function(input, output, session) {
     
     output$para5_1 <- renderText({paste0("For the Track Analysis, we have his/her 10 tracks plotted on a diagram based on the danceability and energy level of each track.")})
     output$para5_2 <- renderText({paste0("Click on the dot to play it for 30s preview. ")})                                   
-    output$para5_3 <- renderText({paste0("Unfortunately Spotify doesn't have url for every songs of every artists, so sometimes you might not be able to play the song, and an error message will show up on your screen.")})    
+    output$para5_3 <- renderText({paste0("Unfortunately Spotify doesn't have url for every songs of every artists, so sometimes you might not be able to play the song, and an warning message will show up on your screen.")})    
     output$break5 <- renderText({paste0("-----♬")})
     
     output$para6 <- renderText({paste0("We hope you enjoy our app : )")})
